@@ -6,8 +6,19 @@ use app\models\User;
 use app\models\ProfileUpdateForm;
 use yii\filters\AccessControl;
 use yii\web\Controller;
+use OpenApi\Annotations as OA;
 use Yii;
+
+/**
+ * @OA\Info(
+ *     title="My First API",
+ *     version="0.1"
+ * )
+ */
  
+
+class OpenApi {}
+
 class ProfileController extends Controller
 {
     public function behaviors()
@@ -59,6 +70,16 @@ class ProfileController extends Controller
             'model' => $model,
         ]);
     }
+
+    /**
+     * @OA\Get(
+     *     path="/api/data.json",
+     *     @OA\Response(
+     *         response="200",
+     *         description="User model"
+     *     )
+     * )
+     */
  
     /**
      * @return User the loaded model
