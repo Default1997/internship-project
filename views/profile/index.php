@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\helpers\Url;
 
-use OpenApi\Serializer;
+// use OpenApi\Serializer;
  
 /* @var $this yii\web\View */
 /* @var $model app\modules\user\models\User */

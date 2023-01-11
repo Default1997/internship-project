@@ -24,6 +24,14 @@ use yii\web\Response;
  * @property integer $updated_at
  * @property string $password write-only password
  */
+
+ /**
+ * @OA\Info(
+ *     title="User model info test",
+ *     version="0.2"
+ * )
+ */
+
 class User extends ActiveRecord implements IdentityInterface, RateLimitInterface
 {
     /**
@@ -68,7 +76,8 @@ class User extends ActiveRecord implements IdentityInterface, RateLimitInterface
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        throw new NotSupportedException('"findIdentityByAccessToken" is not implemented.');
+        return static::findOne(['auth_key' => $token]);
+        // throw new NotSupportedException('"findIdentityByAccessToken" is not implemented.');
     }
  
     /**
@@ -136,11 +145,28 @@ class User extends ActiveRecord implements IdentityInterface, RateLimitInterface
         $this->auth_key = Yii::$app->security->generateRandomString();
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/data.json",
+     *     @OA\Response(
+     *         response="200",
+     *         description="get ratelimit info"
+     *     )
+     * )
+     */
     public function getRateLimit($request, $action)
     {
         return [3, 10]; // сколько запросов можно отправить за n секунд
     }
 
+    /**
+     * @OA\OpenApi(
+     *   @OA\ExternalDocumentation(
+     *     description="Из этого тестового описания вы узнаете о ссылке, которая решит вашу проблемму",
+     *     url="https://yandex.ru"
+     *   )
+     * )
+     */
     public function loadAllowance($request, $action)
     {
         $cache = Yii::$app->cache;
@@ -157,6 +183,16 @@ class User extends ActiveRecord implements IdentityInterface, RateLimitInterface
         Yii::$app->session->setFlash('success', $allowance . '////////////' . $time);
         return [$allowance, $time];
     }
+
+    /**
+     * @OA\Get(
+     *     path="/api/data1.json",
+     *     @OA\Response(
+     *         response="200",
+     *         description="еще что то до кучи"
+     *     )
+     * )
+     */
 
     public function saveAllowance($request, $action, $allowance, $timestamp)
     {   

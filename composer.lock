@@ -4,8 +4,23 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "79d951bdac2c19ee13e21d8cff4d89b7",
+    "content-hash": "768e36c8b4dd08e68afad95d6f3965cc",
     "packages": [
+        {
+            "name": "bower-asset/components-underscore",
+            "version": "1.8.3",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:components/underscore.git",
+                "reference": "91142c898763ca8bb23a32a9808735e4998839d1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/components/underscore/zipball/91142c898763ca8bb23a32a9808735e4998839d1",
+                "reference": "91142c898763ca8bb23a32a9808735e4998839d1"
+            },
+            "type": "bower-asset"
+        },
         {
             "name": "bower-asset/inputmask",
             "version": "3.3.11",
@@ -59,6 +74,26 @@
                 "reference": "38c8d3131a82567bfef18da09f7f4db68c84f8a3"
             },
             "type": "bower-asset"
+        },
+        {
+            "name": "bower-asset/swagger-ui",
+            "version": "v2.2.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/swagger-api/swagger-ui.git",
+                "reference": "552865aa0d990475dfccfde6baa4f28bb7398975"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/552865aa0d990475dfccfde6baa4f28bb7398975",
+                "reference": "552865aa0d990475dfccfde6baa4f28bb7398975"
+            },
+            "type": "bower-asset",
+            "license": [
+                "Apache-2.0",
+                "Copyright 2016 SmartBear Software",
+                "./LICENSE"
+            ]
         },
         {
             "name": "bower-asset/yii2-pjax",
@@ -1489,6 +1524,68 @@
                 }
             ],
             "time": "2022-12-13T09:57:04+00:00"
+        },
+        {
+            "name": "veksa/yii2-swagger-ui",
+            "version": "v1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/veksa/yii2-swagger-ui.git",
+                "reference": "64e7b5107a161bb4bcda36f4f393367e6b6c7416"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/veksa/yii2-swagger-ui/zipball/64e7b5107a161bb4bcda36f4f393367e6b6c7416",
+                "reference": "64e7b5107a161bb4bcda36f4f393367e6b6c7416",
+                "shasum": ""
+            },
+            "require": {
+                "bower-asset/components-underscore": "*",
+                "bower-asset/swagger-ui": "2.2.6",
+                "php": ">=5.5.0",
+                "yiisoft/yii2": "*"
+            },
+            "type": "yii2-extension",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                },
+                "asset-installer-paths": {
+                    "bower-asset-library": "vendor/bower"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "veksa\\swagger\\yii2\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alex Khijnij",
+                    "email": "admin@devblog.pro",
+                    "homepage": "https://devblog.pro",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Yii2 Swagger UI",
+            "homepage": "https://github.com/veksa/yii2-swagger-ui",
+            "keywords": [
+                "component",
+                "extension",
+                "php",
+                "swagger",
+                "swagger-ui",
+                "yii2"
+            ],
+            "support": {
+                "issues": "https://github.com/veksa/yii2-swagger-ui/issues",
+                "source": "https://github.com/veksa/yii2-swagger-ui/tree/v1.0.2"
+            },
+            "time": "2016-11-22T10:39:16+00:00"
         },
         {
             "name": "yiisoft/yii2",
