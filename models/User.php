@@ -10,6 +10,7 @@ use yii\web\IdentityInterface;
 use yii\filters\RateLimitInterface;
 use yii\web\TooManyRequestsHttpException;
 use yii\web\Response;
+use yii\db\Expression;
  
 /**
  * User model
@@ -155,8 +156,9 @@ class User extends ActiveRecord implements IdentityInterface, RateLimitInterface
      * )
      */
     public function getRateLimit($request, $action)
-    {
-        return [3, 10]; // сколько запросов можно отправить за n секунд
+    {   
+        $count = $this->subscription->requests_count;
+        return [$count, 24*3600]; //$count запросов можно отправить за сутки (в секундах)
     }
 
     /**
@@ -170,18 +172,25 @@ class User extends ActiveRecord implements IdentityInterface, RateLimitInterface
     public function loadAllowance($request, $action)
     {
         $cache = Yii::$app->cache;
-        // Yii::$app->session->setFlash('success', $cache->get('allowance'));
-        $allowance = $cache->get('allowance');
-        if (!isset($allowance)) {
-            $cache->set('allowance', '3');//сколько всего запросов разрещено
-            $cache->set('time', 0);//обнулить время последнего запроса
+
+        
+        $data = $cache->get('allowance'.$this->id);
+        if ($data === false) {
+           
+            $cache->set('allowance'.$this->id, $this->subscription->requests_count, date_create('tomorrow')->getTimestamp() - time());//сколько всего запросов разрешено
+            $cache->set('time'.$this->id, $this->limitSpending->updated_at, date_create('tomorrow')->getTimestamp() - time());//записать в кеш время последнего запроса, время жизни кеша до конца дня
+            $this->limitSpending->updateAttributes(['count' => 0]);//если кеш пустой то значит начался новый день и нужно обнулить доступы
         }
-        $allowance = $cache->get('allowance');
-        $time = $cache->get('time');
 
+        $allowance = $cache->get('allowance'.$this->id);
+        $time = $cache->get('time'.$this->id);
 
-        Yii::$app->session->setFlash('success', $allowance . '////////////' . $time);
-        return [$allowance, $time];
+        // if ($allowance == 1) {
+        //     throw new TooManyRequestsHttpException('Лимиты кончились');
+        // }
+
+        Yii::$app->session->setFlash('success', 'Осталось запросов: '. $allowance. 'Использовано запросов: '. $this->limitSpending->count);
+        return [$allowance, $time];//количество запросов в тарифе - количество уже потраченых запросов
     }
 
     /**
@@ -195,14 +204,30 @@ class User extends ActiveRecord implements IdentityInterface, RateLimitInterface
      */
 
     public function saveAllowance($request, $action, $allowance, $timestamp)
-    {   
+    {           
+       
 
-        
+        $this->limitSpending->updateCounters(['count' => 1]);//записать в БД что запрос израсходован
+        $this->limitSpending->updateAttributes(['updated_at' => new Expression('NOW()')]);
+
         $cache = Yii::$app->cache;
-        $cache->set('allowance', $allowance);
-        $cache->set('time', $timestamp);
-        // Yii::$app->session->setFlash('success', $allowance . '////////////' . $timestamp);
+        $cache->set('allowance'.$this->id, $allowance, date_create('tomorrow')->getTimestamp() - time());
+        $cache->set('time'.$this->id, $timestamp, date_create('tomorrow')->getTimestamp() - time());
+        
+        if ($allowance == 0) {
+            throw new TooManyRequestsHttpException('Лимиты кончились');
+        }
+        //потом здесь же нужно будет сохранить в БД что именно это был за запрос
 
     }
- 
+
+    public function getSubscription() 
+    {
+        return $this->hasOne(Subscription::class, ['code' => 'subscription_code']);
+    }
+
+    public function getLimitSpending() 
+    {
+        return $this->hasOne(LimitSpending::class, ['user_id' => 'id']);
+    }
 }

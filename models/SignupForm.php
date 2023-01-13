@@ -5,11 +5,12 @@ namespace app\models;
 use Yii;
 use yii\base\Model;
 use yii\db\Expression;
+use app\models\LimitSpending;
  
 /**
  * Signup form
  */
-class SignupForm extends Model
+class SignupForm extends \yii\db\ActiveRecord
 {
  
     public $username;
@@ -57,10 +58,32 @@ class SignupForm extends Model
         $user->username = $this->username;
         $user->gender = $this->gender;
         $user->setPassword($this->password);
-        $user->created_at = new Expression('NOW()');;
-        $user->updated_at = new Expression('NOW()');;
+        $user->created_at = new Expression('NOW()');
+        $user->updated_at = new Expression('NOW()');
         $user->generateAuthKey();
+        if ($user->save()) {
+            $limitSpending = new LimitSpending();
+            $limitSpending->user_id = $user->id;
+            $limitSpending->count = 0;
+            $limitSpending->updated_at = new Expression('NOW()');
+            $limitSpending->save();
+        }
+        
+
         return $user->save() ? $user : null;
     }
+
+    // public function afterSave($insert, $changedAttributes)
+    // {   
+    //     // // parent::afterSave();
+    //     // die('awdad');
+    //     $limitSpending = new LimitSpending();
+    //     $limitSpending->user_id = $user->id;
+    //     $limitSpending->count = 0;
+    //     $limitSpending->updated_at = new Expression('NOW()');
+    //     $limitSpending->save();
+
+    //     return parent::afterSave($insert, $changedAttributes);
+    // }
  
 }

@@ -38,6 +38,10 @@ class ProfileController extends Controller
  
     public function actionIndex()
     {
+        // print_r($this->findModel());die;
+        $model = $this->findModel();
+        
+        // print_r($model->subscription->id);die;
         return $this->render('index', [
             'model' => $this->findModel(),
         ]);
@@ -62,14 +66,14 @@ class ProfileController extends Controller
      *
      * @return Response
      */
-    public function actionProfile()
-    {
-        $model = Yii::$app->getUser();
+    // public function actionProfile()
+    // {
+    //     $model = Yii::$app->getUser();
 
-        return $this->render('profile', [
-            'model' => $model,
-        ]);
-    }
+    //     return $this->render('profile', [
+    //         'model' => $model,
+    //     ]);
+    // }
 
     /**
      * @OA\Get(

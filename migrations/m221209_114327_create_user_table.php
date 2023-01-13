@@ -20,8 +20,10 @@ class m221209_114327_create_user_table extends Migration
             'password' => $this->string()->notNull(),
             'auth_key' => $this->string(32)->notNull(),
             'gender' => $this->string(10)->notNull(),
+            'subscription_code' => $this->string(50)->notNull()->defaultValue('no subscription'),
             'created_at' => $this->timestamp()->notNull(),
             'updated_at' => $this->timestamp()->notNull(),
+            
         ]);
     }
 

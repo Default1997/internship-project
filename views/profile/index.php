@@ -28,12 +28,21 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value'  => 'Пароль скрыт'
             ],
             'gender',
+            'auth_key',
+            [
+                'label' => 'Тариф',
+                'value' => $model->subscription_code . ' Использовано запросов: ' . $model->limitSpending->count . ' из(пока что тестовых): ' . $model->subscription->requests_count
+            ]
         ],
     ]) ?>
  
 </div>
 
 <?php
+
+
+// print_r($model->getLimitSpending($model->id));die();
+
     // $serializer = new Serializer();
     // $openapi = $serializer->deserialize($jsonString, 'OpenApi\Annotations\OpenApi');
     // echo $openapi->toJson();

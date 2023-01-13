@@ -17,11 +17,14 @@ use yii\filters\auth\HttpBearerAuth;
 class DocsController extends \yii\web\Controller
 {
 
-    public function init()
-    {
-        parent::init();
-        \Yii::$app->user->enableSession = false;
-    }
+    //закоменитировано потому что информация об апи должна быть доступна только по токену в запросе, токен в ЛК
+    // public function init()
+    // {
+    //     parent::init();
+    //     \Yii::$app->user->enableSession = false;
+    //     $token =  \Yii::$app->user->identity->auth_key;
+    //     \Yii::$app->request->headers->set('Authorization', ['Bearer ' . $token]);
+    // }
 
 
     public function behaviors()
