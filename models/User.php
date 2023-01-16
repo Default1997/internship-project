@@ -175,8 +175,8 @@ class User extends ActiveRecord implements IdentityInterface, RateLimitInterface
 
         
         $data = $cache->get('allowance'.$this->id);
-        if ($data === false) {
-           
+
+        if ($data === false) {  
             $cache->set('allowance'.$this->id, $this->subscription->requests_count, date_create('tomorrow')->getTimestamp() - time());//сколько всего запросов разрешено
             $cache->set('time'.$this->id, $this->limitSpending->updated_at, date_create('tomorrow')->getTimestamp() - time());//записать в кеш время последнего запроса, время жизни кеша до конца дня
             $this->limitSpending->updateAttributes(['count' => 0]);//если кеш пустой то значит начался новый день и нужно обнулить доступы
@@ -185,11 +185,7 @@ class User extends ActiveRecord implements IdentityInterface, RateLimitInterface
         $allowance = $cache->get('allowance'.$this->id);
         $time = $cache->get('time'.$this->id);
 
-        // if ($allowance == 1) {
-        //     throw new TooManyRequestsHttpException('Лимиты кончились');
-        // }
-
-        Yii::$app->session->setFlash('success', 'Осталось запросов: '. $allowance. 'Использовано запросов: '. $this->limitSpending->count);
+        Yii::$app->session->setFlash('success', 'Осталось запросов: ' . $allowance . 'Использовано запросов: ' . $this->limitSpending->count);
         return [$allowance, $time];//количество запросов в тарифе - количество уже потраченых запросов
     }
 
@@ -215,8 +211,6 @@ class User extends ActiveRecord implements IdentityInterface, RateLimitInterface
         $cache->set('time'.$this->id, $timestamp, date_create('tomorrow')->getTimestamp() - time());
 
         //потом здесь же нужно будет сохранить в БД что именно это был за запрос
-        
-        // print_r($request->bodyParams);die;
         $userRequest = new QuotaUtilization();
         $userRequest->user_id = $this->id;
         $userRequest->date = new Expression('NOW()');

@@ -49,7 +49,8 @@ $config = [
             'showScriptName' => false,
             'rules' => [
                 // '' => 'site/index', 
-                'api/v1/docs/<action>'=>'docs/<action>',
+                'docs/<action>' => 'docs/<action>',
+                'api/v1/<action>' => 'api/<action>',
                 // example.com/api/v1/{controllername}/{actionname}
             ],
         ],

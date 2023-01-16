@@ -39,12 +39,7 @@ class SiteController extends Controller
                 'actions' => [
                     'logout' => ['post'],
                 ],
-            ],
-            'rateLimiter' => [
-                'class' => RateLimiter::className(),
-                // 'errorMessage' => 'Превышен лимит запросов',
-                // 'response' => true,
-            ],
+            ]
         ];
     }
 
