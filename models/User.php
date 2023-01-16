@@ -213,12 +213,17 @@ class User extends ActiveRecord implements IdentityInterface, RateLimitInterface
         $cache = Yii::$app->cache;
         $cache->set('allowance'.$this->id, $allowance, date_create('tomorrow')->getTimestamp() - time());
         $cache->set('time'.$this->id, $timestamp, date_create('tomorrow')->getTimestamp() - time());
-        
-        if ($allowance == 0) {
-            throw new TooManyRequestsHttpException('Лимиты кончились');
-        }
-        //потом здесь же нужно будет сохранить в БД что именно это был за запрос
 
+        //потом здесь же нужно будет сохранить в БД что именно это был за запрос
+        
+        // print_r($request->bodyParams);die;
+        $userRequest = new QuotaUtilization();
+        $userRequest->user_id = $this->id;
+        $userRequest->date = new Expression('NOW()');
+        $userRequest->request_method = $request->method;
+        $userRequest->api_method =  $request->scriptUrl;
+        $userRequest->params = $request->bodyParams;
+        $userRequest->save();
     }
 
     public function getSubscription() 
@@ -229,5 +234,10 @@ class User extends ActiveRecord implements IdentityInterface, RateLimitInterface
     public function getLimitSpending() 
     {
         return $this->hasOne(LimitSpending::class, ['user_id' => 'id']);
+    }
+
+    public function getQuotaUtilization() 
+    {
+        return $this->hasMany(QuotaUtilization::class, ['user_id' => 'id']);
     }
 }
