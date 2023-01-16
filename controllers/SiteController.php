@@ -71,7 +71,7 @@ class SiteController extends Controller
     }
 
     /**
-     * Login action.
+     * Login action.Ы
      *
      * @return Response|string
      */

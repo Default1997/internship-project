@@ -19,6 +19,12 @@ class m230116_062643_create_quota_utilization_table extends Migration
             'api_method' => $this->string()->notNull(),
             'params' => $this->json(),
         ]);
+
+        $this->createIndex(
+            'idx-subscription-user_id',
+            'subscription',
+            'user_id'
+        );
     }
 
     /**

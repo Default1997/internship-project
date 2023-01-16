@@ -210,12 +210,13 @@ class User extends ActiveRecord implements IdentityInterface, RateLimitInterface
         $cache->set('allowance'.$this->id, $allowance, date_create('tomorrow')->getTimestamp() - time());
         $cache->set('time'.$this->id, $timestamp, date_create('tomorrow')->getTimestamp() - time());
 
+        print_r($request);die;
         //потом здесь же нужно будет сохранить в БД что именно это был за запрос
         $userRequest = new QuotaUtilization();
         $userRequest->user_id = $this->id;
         $userRequest->date = new Expression('NOW()');
         $userRequest->request_method = $request->method;
-        $userRequest->api_method =  $request->scriptUrl;
+        $userRequest->api_method =  $request->pathInfo;
         $userRequest->params = $request->bodyParams;
         $userRequest->save();
     }

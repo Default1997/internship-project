@@ -21,9 +21,9 @@ class m230112_085601_create_subscription_table extends Migration
         ]);
 
         $this->createIndex(
-            'idx-subscription-name',
+            'idx-subscription-code',
             'subscription',
-            'name'
+            'code'
         );
     }
 

@@ -21,4 +21,14 @@ class ApiController extends \yii\web\Controller
         return $this->render('index');
     }
 
+    public function actionTest()
+    {
+        return 'Ура, ты получил ответ. Hello World!';
+    }
+
+    public function actionTest2($param)
+    {
+        return 'Ответ с параметром: '.$param;
+    }
+
 }

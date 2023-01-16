@@ -17,6 +17,12 @@ class m230112_115822_create_limitSpending_table extends Migration
             'count' => $this->integer(50)->notNull()->defaultValue('0'),
             'updated_at' => $this->timestamp(),
         ]);
+
+        $this->createIndex(
+            'idx-subscription-user_id',
+            'subscription',
+            'user_id'
+        );
     }
 
     /**
