@@ -13,14 +13,14 @@ class m230112_115822_create_limitSpending_table extends Migration
     public function safeUp()
     {
         $this->createTable('{{%limitSpending}}', [
-            'user_id' => $this->integer(50)->notNull(),
+            'user_id' => $this->integer()->notNull(),
             'count' => $this->integer(50)->notNull()->defaultValue('0'),
-            'updated_at' => $this->timestamp(),
+            'date_update' => $this->integer()->notNull(),
         ]);
 
         $this->createIndex(
-            'idx-subscription-user_id',
-            'subscription',
+            'idx-limitSpending-user_id',
+            'limitSpending',
             'user_id'
         );
     }

@@ -21,8 +21,8 @@ class m230116_062643_create_quota_utilization_table extends Migration
         ]);
 
         $this->createIndex(
-            'idx-subscription-user_id',
-            'subscription',
+            'idx-quota_utilization-user_id',
+            'quota_utilization',
             'user_id'
         );
     }

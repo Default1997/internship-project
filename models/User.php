@@ -173,16 +173,30 @@ class User extends ActiveRecord implements IdentityInterface, RateLimitInterface
     {
         $cache = Yii::$app->cache;
 
-        
-        $data = $cache->get('allowance'.$this->id);
+        // print_r(new Expression('NOWDAY()'));die;
+        $data = $cache->get('allowance'.$this->id.date_create('tomorrow')->getTimestamp());
 
         if ($data === false) {  
-            $cache->set('allowance'.$this->id, $this->subscription->requests_count, date_create('tomorrow')->getTimestamp() - time());//сколько всего запросов разрешено
-            $cache->set('time'.$this->id, $this->limitSpending->updated_at, date_create('tomorrow')->getTimestamp() - time());//записать в кеш время последнего запроса, время жизни кеша до конца дня
-            $this->limitSpending->updateAttributes(['count' => 0]);//если кеш пустой то значит начался новый день и нужно обнулить доступы
+            $cache->set('allowance'.$this->id.date_create('tomorrow')->getTimestamp(), $this->subscription->requests_count, date_create('tomorrow')->getTimestamp() - time());//сколько всего запросов разрешено
+            $cache->set('time'.$this->id, $this->limitSpending->date_update, date_create('tomorrow')->getTimestamp() - time());//записать в кеш время последнего запроса, время жизни кеша до конца дня
+            // $this->limitSpending->updateAttributes(['count' => 0]);//если кеш пустой то значит начался новый день и нужно обнулить доступы
+
+            $date = date_create('tomorrow')->getTimestamp();
+            $isExists = LimitSpending::find()->where(['user_id' => $this->id, 'date_update' => $date])->exists(); 
+
+            if ($this->limitSpending->date_update != date_create('tomorrow')->getTimestamp() && $isExists === false) {
+                $record = new LimitSpending();
+                $record->user_id = $this->id;//.date_create('tomorrow')->getTimestamp();
+                $record->count = 0;
+                $record->date_update = date_create('tomorrow')->getTimestamp();
+                $record->save();
+
+                // print_r($record);die;
+            }
+            
         }
 
-        $allowance = $cache->get('allowance'.$this->id);
+        $allowance = $cache->get('allowance'.$this->id.date_create('tomorrow')->getTimestamp());
         $time = $cache->get('time'.$this->id);
 
         Yii::$app->session->setFlash('success', 'Осталось запросов: ' . $allowance . 'Использовано запросов: ' . $this->limitSpending->count);
@@ -200,17 +214,22 @@ class User extends ActiveRecord implements IdentityInterface, RateLimitInterface
      */
 
     public function saveAllowance($request, $action, $allowance, $timestamp)
-    {           
-       
+    {   
+        
+        $date = date_create('tomorrow')->getTimestamp();
 
-        $this->limitSpending->updateCounters(['count' => 1]);//записать в БД что запрос израсходован
-        $this->limitSpending->updateAttributes(['updated_at' => new Expression('NOW()')]);
+        // print_r($date);die;
+        // $this->limitSpending->updateCounters(['count' => 1]);
+
+        $record = LimitSpending::findOne(['user_id' => $this->id, 'date_update' => $date]);
+        $record->count = $record->count + 1;
+        $record->save();
 
         $cache = Yii::$app->cache;
-        $cache->set('allowance'.$this->id, $allowance, date_create('tomorrow')->getTimestamp() - time());
+        $cache->set('allowance'.$this->id.date_create('tomorrow')->getTimestamp(), $allowance, date_create('tomorrow')->getTimestamp() - time());
         $cache->set('time'.$this->id, $timestamp, date_create('tomorrow')->getTimestamp() - time());
 
-        print_r($request);die;
+        print_r($record);die;
         //потом здесь же нужно будет сохранить в БД что именно это был за запрос
         $userRequest = new QuotaUtilization();
         $userRequest->user_id = $this->id;
@@ -228,7 +247,7 @@ class User extends ActiveRecord implements IdentityInterface, RateLimitInterface
 
     public function getLimitSpending() 
     {
-        return $this->hasOne(LimitSpending::class, ['user_id' => 'id']);
+        return $this->hasMany(LimitSpending::class, ['user_id' => 'id']);
     }
 
     public function getQuotaUtilization() 

@@ -61,29 +61,15 @@ class SignupForm extends \yii\db\ActiveRecord
         $user->created_at = new Expression('NOW()');
         $user->updated_at = new Expression('NOW()');
         $user->generateAuthKey();
-        if ($user->save()) {
-            $limitSpending = new LimitSpending();
-            $limitSpending->user_id = $user->id;
-            $limitSpending->count = 0;
-            $limitSpending->updated_at = new Expression('NOW()');
-            $limitSpending->save();
-        }
+        // if ($user->save()) {
+        //     $limitSpending = new LimitSpending();
+        //     $limitSpending->user_id = $user->id . '_' . date_create('today')->getTimestamp();
+        //     $limitSpending->count = 0;
+        //     $limitSpending->updated_at = date_create('today')->getTimestamp();
+        //     $limitSpending->save();
+        // }
         
 
         return $user->save() ? $user : null;
     }
-
-    // public function afterSave($insert, $changedAttributes)
-    // {   
-    //     // // parent::afterSave();
-    //     // die('awdad');
-    //     $limitSpending = new LimitSpending();
-    //     $limitSpending->user_id = $user->id;
-    //     $limitSpending->count = 0;
-    //     $limitSpending->updated_at = new Expression('NOW()');
-    //     $limitSpending->save();
-
-    //     return parent::afterSave($insert, $changedAttributes);
-    // }
- 
 }
