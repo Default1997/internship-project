@@ -174,21 +174,21 @@ class User extends ActiveRecord implements IdentityInterface, RateLimitInterface
         $cache = Yii::$app->cache;
 
         // print_r(new Expression('NOWDAY()'));die;
-        $data = $cache->get('allowance'.$this->id.date_create('tomorrow')->getTimestamp());
+        $data = $cache->get('allowance'.$this->id.date_create('today')->getTimestamp());
 
         if ($data === false) {  
-            $cache->set('allowance'.$this->id.date_create('tomorrow')->getTimestamp(), $this->subscription->requests_count, date_create('tomorrow')->getTimestamp() - time());//сколько всего запросов разрешено
+            $cache->set('allowance'.$this->id.date_create('today')->getTimestamp(), $this->subscription->requests_count, date_create('tomorrow')->getTimestamp() - time());//сколько всего запросов разрешено
             $cache->set('time'.$this->id, $this->limitSpending->date_update, date_create('tomorrow')->getTimestamp() - time());//записать в кеш время последнего запроса, время жизни кеша до конца дня
             // $this->limitSpending->updateAttributes(['count' => 0]);//если кеш пустой то значит начался новый день и нужно обнулить доступы
 
-            $date = date_create('tomorrow')->getTimestamp();
+            $date = date_create('today')->getTimestamp();
             $isExists = LimitSpending::find()->where(['user_id' => $this->id, 'date_update' => $date])->exists(); 
 
-            if ($this->limitSpending->date_update != date_create('tomorrow')->getTimestamp() && $isExists === false) {
+            if ($this->limitSpending->date_update != date_create('today')->getTimestamp() && $isExists === false) {
                 $record = new LimitSpending();
                 $record->user_id = $this->id;//.date_create('tomorrow')->getTimestamp();
                 $record->count = 0;
-                $record->date_update = date_create('tomorrow')->getTimestamp();
+                $record->date_update = date_create('today')->getTimestamp();
                 $record->save();
 
                 // print_r($record);die;
@@ -196,7 +196,7 @@ class User extends ActiveRecord implements IdentityInterface, RateLimitInterface
             
         }
 
-        $allowance = $cache->get('allowance'.$this->id.date_create('tomorrow')->getTimestamp());
+        $allowance = $cache->get('allowance'.$this->id.date_create('today')->getTimestamp());
         $time = $cache->get('time'.$this->id);
 
         Yii::$app->session->setFlash('success', 'Осталось запросов: ' . $allowance . 'Использовано запросов: ' . $this->limitSpending->count);
@@ -216,20 +216,27 @@ class User extends ActiveRecord implements IdentityInterface, RateLimitInterface
     public function saveAllowance($request, $action, $allowance, $timestamp)
     {   
         
-        $date = date_create('tomorrow')->getTimestamp();
+        $date = date_create('today')->getTimestamp();
 
         // print_r($date);die;
-        // $this->limitSpending->updateCounters(['count' => 1]);
+        // $this->limitSpending->updateCounters(['count' => 1], 'date_update ='.$date);
 
-        $record = LimitSpending::findOne(['user_id' => $this->id, 'date_update' => $date]);
+        // $record = LimitSpending::findOne(['user_id' => $this->id, 'date_update' => $date]);
+        $record = LimitSpending::find()->where(['user_id' => $this->id, 'date_update' => $date])->one();
         $record->count = $record->count + 1;
         $record->save();
 
-        $cache = Yii::$app->cache;
-        $cache->set('allowance'.$this->id.date_create('tomorrow')->getTimestamp(), $allowance, date_create('tomorrow')->getTimestamp() - time());
-        $cache->set('time'.$this->id, $timestamp, date_create('tomorrow')->getTimestamp() - time());
+        // $record = LimitSpending::find()
+        // ->asArray()
+        // ->all();
+        // $record->count = $record->count + 1;
+        // $record->save();
 
-        print_r($record);die;
+        $cache = Yii::$app->cache;
+        $cache->set('allowance'.$this->id.date_create('today')->getTimestamp(), $allowance, date_create('tomorrow')->getTimestamp() - time());
+        $cache->set('time'.$this->id, $timestamp, date_create('today')->getTimestamp() - time());
+
+        // print_r($record);die;
         //потом здесь же нужно будет сохранить в БД что именно это был за запрос
         $userRequest = new QuotaUtilization();
         $userRequest->user_id = $this->id;
@@ -247,7 +254,7 @@ class User extends ActiveRecord implements IdentityInterface, RateLimitInterface
 
     public function getLimitSpending() 
     {
-        return $this->hasMany(LimitSpending::class, ['user_id' => 'id']);
+        return $this->hasOne(LimitSpending::class, ['user_id' => 'id']);
     }
 
     public function getQuotaUtilization() 
