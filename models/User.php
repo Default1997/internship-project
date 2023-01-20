@@ -237,6 +237,8 @@ class User extends ActiveRecord implements IdentityInterface, RateLimitInterface
                 // print_r($record);die;
            }
         }
+        // print_r($record->count);die;
+        // print_r(phpinfo());die;
 
         // print_r($records);die;
 
