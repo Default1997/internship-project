@@ -36,7 +36,6 @@ class ApiController extends \yii\web\Controller
     {
         $cat = new Cat();
         $cat->create($cat);
-        $cat->save();
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
         return $cat;

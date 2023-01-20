@@ -62,7 +62,7 @@ class Cat extends \yii\db\ActiveRecord
         
         $cat->feet = 4;
         $cat->tail = 1;
-        // $cat->save();
+        $cat->save();
 
         return $cat;
     }
