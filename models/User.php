@@ -225,22 +225,26 @@ class User extends ActiveRecord implements IdentityInterface, RateLimitInterface
 
 
         $date = date_create('today')->getTimestamp();
-        // $record = LimitSpending::find()->where(['user_id' => $this->id])->andWhere(['date_update' => $date])->one();
-        // $record->count = $record->count + 1;
-        // $record->save();
+        $record = LimitSpending::find()->where(['user_id' => $this->id])->andWhere(['date_update' => $date])->one();
+        $record->count = $record->count + 1;
+        $record->save();
 
-        $records = LimitSpending::find()->where(['user_id' => $this->id])->all();
-        foreach ($records as $record) {
-           if($record->date_update == $date){
-                $record->count = $record->count + 1;
-                $record->save();
-                // print_r($record);die;
-           }
-        }
-        // print_r($record->count);die;
+        // print_r($record->date_update);
+        // die;
+
+        // $records = LimitSpending::find()->where(['user_id' => $this->id])->all();
+        // foreach ($records as $record) {
+        //    if($record->date_update == $date){
+        //         $record->count = $record->count + 1;
+        //         $record->save();
+        //         // print_r($record);die;
+        //    }
+        // }
+        // print_r($records);die;
+
         // print_r(phpinfo());die;
 
-        // print_r($records);die;
+        
 
         $cache = Yii::$app->cache;
         $cache->set('allowance'.$this->id.date_create('today')->getTimestamp(), $allowance, date_create('tomorrow')->getTimestamp() - time());
