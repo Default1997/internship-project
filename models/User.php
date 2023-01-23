@@ -148,7 +148,7 @@ class User extends ActiveRecord implements IdentityInterface, RateLimitInterface
 
     /**
      * @OA\Get(
-     *     path="/api/data.json",
+     *     path="/api/data_user2.json",
      *     @OA\Response(
      *         response="200",
      *         description="get ratelimit info"
@@ -205,7 +205,7 @@ class User extends ActiveRecord implements IdentityInterface, RateLimitInterface
 
     /**
      * @OA\Get(
-     *     path="/api/data1.json",
+     *     path="/api/data_user1.json",
      *     @OA\Response(
      *         response="200",
      *         description="еще что то до кучи"

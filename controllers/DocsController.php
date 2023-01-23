@@ -4,7 +4,7 @@ namespace app\controllers;
 use OpenApi\Annotations as OA;
 use yii\helpers\Url;
 use Yii;
-use yii\filters\auth\HttpBearerAuth;
+// use yii\filters\auth\HttpBearerAuth;
 
 /**
  * @OA\Info(
@@ -27,14 +27,14 @@ class DocsController extends \yii\web\Controller
     // }
 
 
-    public function behaviors()
-    {
-        $behaviors = parent::behaviors();
-        $behaviors['authenticator'] = [
-            'class' => HttpBearerAuth::class,
-        ];
-        return $behaviors;
-    }
+    // public function behaviors()
+    // {
+    //     $behaviors = parent::behaviors();
+    //     $behaviors['authenticator'] = [
+    //         'class' => HttpBearerAuth::class,
+    //     ];
+    //     return $behaviors;
+    // }
 
     public function actionIndex()
     {
@@ -47,7 +47,8 @@ class DocsController extends \yii\web\Controller
         return $this->asJson(\OpenApi\Generator::scan([
             // Yii::getAlias('@app/controllers/UserController.php'),
 
-            Yii::getAlias('@app/models/User.php'),
+            // Yii::getAlias('@app/models/User.php'),
+            Yii::getAlias('@app/models/Cat.php'),
         ]));
     }
 
