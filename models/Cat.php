@@ -3,7 +3,7 @@
 namespace app\models;
 
 use Yii;
-use yii\base\ErrorException;
+use yii\web\BadRequestHttpException;
 
 /**
  * This is the model class for table "cat".
@@ -69,7 +69,19 @@ class Cat extends \yii\db\ActiveRecord
     {
         return Cat::findOne(['id' => $id]);
     }
-
+    /**
+    * @OA\Get(
+    *       path="/api/v1/createcat",
+    *       description = "Создать случайного кота",
+    *    @OA\Response(
+    *         response="200",
+    *         description="При успешном выполнении запроса будет возвращен объект созданного кота",
+    *         @OA\JsonContent(
+    *             @OA\Examples(example="result", value={"gender":"male","mustache":"0","feet":"3","tail":"4","id":16}, summary="An result object."),      
+    *         )
+    *    )
+    * )
+    */
     public function create($cat)
     {
         $data = rand(0,1);
@@ -89,66 +101,67 @@ class Cat extends \yii\db\ActiveRecord
     * @OA\Get(
     *       path="/api/v1/updatecat",
     *       description = "Обновить данные существующего кота",
-    *   @OA\Parameter(
-    *         name="id",
-    *         in="query",
-    *         description="id кота которого нужно изменить",
-    *         required=true,
-    *      
-    *          @OA\Schema(
-    *              schema="integer",
-    *              @OA\Property(property="id", type="integer")
-    *          )
-    *      ),
+    *  @OA\Parameter(
+    *       name="id",
+    *       in="query",
+    *       description="id кота",
+    *       required=true,
     * 
-    *  *   @OA\Parameter(
-    *         name="gender",
-    *         in="query",
-    *         description="пол кота",
-    *         required=true,
-    *      
-    *          @OA\Schema(
-    *              schema="string",
-    *              @OA\Property(property="gender", type="string")
+    *       @OA\Property(
+    *           property="id",
+    *           type="integer",
+    *           example="14"
     *          )
-    *      ),
+    *  ),
     * 
-    *  *   @OA\Parameter(
-    *         name="mustache",
-    *         in="query",
-    *         description="есть ли у кота усы 0 или 1",
-    *         required=true,
-    *      
-    *          @OA\Schema(
-    *              schema="integer",
-    *              @OA\Property(property="mustache", type="integer")
-    *          )
-    *      ),
+    *  @OA\Parameter(
+    *       name="gender",
+    *       in="query",
+    *       description="Пол кота",
+    *       required=true,
     * 
-    *  *   @OA\Parameter(
-    *         name="feet",
-    *         in="query",
-    *         description="количество ног",
-    *         required=true,
-    *      
-    *          @OA\Schema(
-    *              schema="integer",
-    *              @OA\Property(property="feet", type="integer")
-    *          )
+    *       @OA\Property(
+    *           property="gender",
+    *           type="string",
+    *           example="male"
     *      ),
+    *  ),
+    *  @OA\Parameter(
+    *       name="mustache",
+    *       in="query",
+    *       description="Усы кота",
+    *       required=true,
     * 
-    *  *   @OA\Parameter(
-    *         name="tail",
-    *         in="query",
-    *         description="описание хвоста кота",
-    *         required=true,
-    *      
-    *          @OA\Schema(
-    *              schema="string",
-    *              @OA\Property(property="tail", type="string")
-    *          )
+    *       @OA\Property(
+    *           property="mustache",
+    *           type="boolean",
+    *           example="0"
     *      ),
+    *  ),
+    *  @OA\Parameter(
+    *       name="feet",
+    *       in="query",
+    *       description="Количество ног",
+    *       required=true,
     * 
+    *       @OA\Property(
+    *           property="feet",
+    *           type="integer",
+    *           example="4"
+    *      ),
+    *  ),
+    *  @OA\Parameter(
+    *       name="tail",
+    *       in="query",
+    *       description="Описание хвоста",
+    *       required=true,
+    * 
+    *       @OA\Property(
+    *           property="tail",
+    *           type="string",
+    *           example="Пушистый"
+    *      ),
+    *  ),
     *
     *    @OA\Response(
     *         response="200",
@@ -172,12 +185,63 @@ class Cat extends \yii\db\ActiveRecord
 
         return $cat;
     }
-
+    /**
+    * @OA\Get(
+    *       path="/api/v1/deletecat",
+    *       description = "Удалить кота по id",
+    *  @OA\Parameter(
+    *       name="id",
+    *       in="query",
+    *       description="id кота",
+    *       required=true,
+    * 
+    *       @OA\Property(
+    *           property="id",
+    *           type="integer",
+    *           example="14"
+    *          )
+    *  ),
+    *
+    *    @OA\Response(
+    *         response="200",
+    *         description="При успешном выполнении запроса кот будет удален"
+    *    )
+    * )
+    */
     public function deleteCat($cat, $id)
     {
         $this->findCatById($id)->delete();
     }
-
+    /**
+    * @OA\Get(
+    *       path="/api/v1/castratecat",
+    *       description = "Кастрировать кота по id",
+    *  @OA\Parameter(
+    *       name="id",
+    *       in="query",
+    *       description="id кота",
+    *       required=true,
+    * 
+    *       @OA\Property(
+    *           property="id",
+    *           type="integer",
+    *           example="14"
+    *          )
+    *  ),
+    *
+    *    @OA\Response(
+    *         response="200",
+    *         description="При успешном выполнении запроса кот будет кастрирован и пол изменится на castrated и вернется объект кота",
+    *         @OA\JsonContent(
+    *             @OA\Examples(example="result", value={"gender":"male","castrated":"0","feet":"3","tail":"4","id":16}, summary="An result object."),      
+    *         )
+    *    ),
+    *    @OA\Response(
+    *         response="400",
+    *         description="Проверьте пол кота. Это не кот а кошка! Либо уже кастрирован("
+    *    )
+    * )
+    */
     public function Castrate($cat, $id)
     {
         $cat->findCatById($id);
@@ -187,8 +251,7 @@ class Cat extends \yii\db\ActiveRecord
 
             return $cat;
         }else{
-            throw new ErrorException('Это не кот, а кошка! Либо уже кастрирован(');
+            throw new BadRequestHttpException('Это не кот а кошка! Либо уже кастрирован(');
         }
     }
-
 }

@@ -16,9 +16,9 @@ class ApiController extends \yii\web\Controller
             'rateLimiter' => [
                 'class' => RateLimiter::className(),
             ],
-            $behaviors['authenticator'] = [
-                'class' => HttpBearerAuth::class,
-            ]
+            // $behaviors['authenticator'] = [
+            //     'class' => HttpBearerAuth::class,
+            // ]
         ];
     }
 
