@@ -3,6 +3,11 @@
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\helpers\Url;
+use practically\chartjs\Chart;
+
+use yii\widgets\ListView;
+
+use app\models\LimitSpending;
 
 // use OpenApi\Serializer;
  
@@ -31,7 +36,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'auth_key',
             [
                 'label' => 'Тариф',
-                'value' => $model->subscription_code . ' Использовано запросов: ' . $model->limitSpending->count . ' из(пока что тестовых): ' . $model->subscription->requests_count
+                'value' => $model->subscription_code
             ]
         ],
     ]) ?>
@@ -39,22 +44,45 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 
 <?php
+    //подготовить массив статистики под формат виджета
+    $data =array();
+    foreach ($limitSpending as $limit) {
+        $data[date('d-m-Y', $limit->date_update)]  = $limit->count;
+    }
+    // array_reverse($data, false);
+    // print_r($data);die;
 
+    echo Chart::widget([
+        'type' => Chart::TYPE_BAR,
+        'clientOptions' => [
+            'title' => [
+                'display' => true,
+                'text' => 'Количество запросов по дням',
+            ],
+            'legend' => ['display' => false],
+        ],
+        'datasets' => [
+            [
+                // 'query' => LimitSpending::find()
+                // ->select('count as data')
+                // ->addSelect('date_update')
+                // ->where(['user_id' => \Yii::$app->user->identity->id])
+                // // ->orderBy('date_update SORT_ASC')
+                // ->createCommand(),
+                // 'labelAttribute' => 'date_update'
+                'data' => $data
+            ]
+        ]
+    ]);
+?>
 
-// print_r($model->getLimitSpending($model->id));die();
-
-    // $serializer = new Serializer();
-    // $openapi = $serializer->deserialize($jsonString, 'OpenApi\Annotations\OpenApi');
-    // echo $openapi->toJson();
-
-    // require("vendor/autoload.php");
-// $openapi = \OpenApi\Generator::scan(['controllers\ProfileController.php']);
-// header('Content-Type: application/x-yaml');
-// echo $openapi->toYaml();
+<?= ListView::widget([
+    'dataProvider' => $dataProvider,
+    'itemView' => '_list',
+]);
 ?>
 
 
-<!-- $model->identity->username
-$model->identity->gender
-$model->identity->updated_at -->
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+<!-- <script type="text/javascript" src="jscript/graph.js"></script> -->

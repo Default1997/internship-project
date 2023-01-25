@@ -3,11 +3,14 @@
 namespace app\controllers;
  
 use app\models\User;
+use app\models\LimitSpending;
+use app\models\QuotaUtilization;
 use app\models\ProfileUpdateForm;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use OpenApi\Annotations as OA;
 use Yii;
+use yii\data\ActiveDataProvider;
 
 /**
  * @OA\Info(
@@ -40,10 +43,17 @@ class ProfileController extends Controller
     {
         // print_r($this->findModel());die;
         $model = $this->findModel();
+        $dataProvider = new ActiveDataProvider([
+            'query' => QuotaUtilization::find()->where(['user_id' => \Yii::$app->user->identity->id])->orderBy(['date' => SORT_ASC]),
+            'pagination' => [
+                'pageSize' => 20,
+                ],
+        ]);
         
-        // print_r($model->subscription->id);die;
         return $this->render('index', [
             'model' => $this->findModel(),
+            'limitSpending' => LimitSpending::find()->where(['user_id' => \Yii::$app->user->identity->id])->orderBy(['date_update' => SORT_ASC])->all(),
+            'dataProvider' => $dataProvider
         ]);
     }
 
