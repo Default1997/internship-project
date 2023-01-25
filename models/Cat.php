@@ -244,7 +244,9 @@ class Cat extends \yii\db\ActiveRecord
     */
     public function Castrate($cat, $id)
     {
-        $cat->findCatById($id);
+        $cat = $cat->findCatById($id);
+
+        // print_r($cat);die;
         if ($cat->gender == 'male') {
             $cat->gender = 'castrated';
             $cat->save();

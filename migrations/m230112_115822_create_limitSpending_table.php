@@ -13,6 +13,7 @@ class m230112_115822_create_limitSpending_table extends Migration
     public function safeUp()
     {
         $this->createTable('{{%limitSpending}}', [
+            'id' => $this->primaryKey(),
             'user_id' => $this->integer()->notNull(),
             'count' => $this->integer(50)->notNull()->defaultValue('0'),
             'date_update' => $this->integer()->notNull(),

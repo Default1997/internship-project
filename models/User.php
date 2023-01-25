@@ -182,6 +182,7 @@ class User extends ActiveRecord implements IdentityInterface, RateLimitInterface
             // $this->limitSpending->updateAttributes(['count' => 0]);//если кеш пустой то значит начался новый день и нужно обнулить доступы
 
             $date = date_create('today')->getTimestamp();
+            // print_r($date);die;
             $isExists = LimitSpending::find()->where(['user_id' => $this->id, 'date_update' => $date])->exists(); 
 
             if ($this->limitSpending->date_update != date_create('today')->getTimestamp() && $isExists === false) {
@@ -215,19 +216,27 @@ class User extends ActiveRecord implements IdentityInterface, RateLimitInterface
 
     public function saveAllowance($request, $action, $allowance, $timestamp)
     {   
-        
+        $date = date_create('today')->getTimestamp();
         
 
         // print_r($date);die;
-        // $this->limitSpending->updateCounters(['count' => 1], 'date_update ='.$date);
+        // $this->limitSpending->updateCounters(['count' => 1], ['date_update' => $date]);
 
         // $record = LimitSpending::findOne(['user_id' => $this->id, 'date_update' => $date]);
 
 
-        $date = date_create('today')->getTimestamp();
-        $record = LimitSpending::find()->where(['user_id' => $this->id])->andWhere(['date_update' => $date])->one();
+        
+
+        // $record = LimitSpending::findOne(['user_id' => $this->id, 'date_update' => $date]);
+
+        $record = LimitSpending::find()->where(['user_id' => $this->id, 'date_update' => $date])->one();
         $record->count = $record->count + 1;
         $record->save();
+
+        // $query = LimitSpending::find()->where(['user_id' => $this->id, 'date_update' => $date])->one();
+        // print_r(Yii::$app->db->createCommand($query));
+
+        
 
         // print_r($record->date_update);
         // die;
