@@ -40,7 +40,7 @@ class ApiController extends \yii\web\Controller
     public function actionCreatecat()
     {
         $cat = new Cat();
-        $cat->create($cat);
+        $cat = $cat->create($cat);
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
         return $cat;
@@ -57,7 +57,7 @@ class ApiController extends \yii\web\Controller
     public function actionUpdatecat($id, $gender, $mustache, $feet, $tail)
     {
         $cat = new Cat();
-        $cat->updateCat($cat, $id, $gender, $mustache, $feet, $tail);
+        $cat = $cat->updateCat($cat, $id, $gender, $mustache, $feet, $tail);
 
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
@@ -73,7 +73,7 @@ class ApiController extends \yii\web\Controller
     public function actionCastratecat($id)
     {
         $cat = new Cat();
-        $cat->Castrate($cat, $id);
+        $cat = $cat->Castrate($cat, $id);
 
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 

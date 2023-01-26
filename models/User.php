@@ -11,6 +11,7 @@ use yii\filters\RateLimitInterface;
 use yii\web\TooManyRequestsHttpException;
 use yii\web\Response;
 use yii\db\Expression;
+use yii\helpers\Json;
  
 /**
  * User model
@@ -266,7 +267,8 @@ class User extends ActiveRecord implements IdentityInterface, RateLimitInterface
         $userRequest->date = new Expression('NOW()');
         $userRequest->request_method = $request->method;
         $userRequest->api_method =  $request->pathInfo;
-        $userRequest->params = $request->bodyParams;
+        $userRequest->params = Json::encode($request->getQueryParams());
+        
         $userRequest->save();
     }
 

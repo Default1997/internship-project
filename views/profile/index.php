@@ -6,6 +6,8 @@ use yii\helpers\Url;
 use practically\chartjs\Chart;
 
 use yii\widgets\ListView;
+use yii\widgets\Pjax;
+use yii\grid\GridView;
 
 use app\models\LimitSpending;
 
@@ -43,13 +45,19 @@ $this->params['breadcrumbs'][] = $this->title;
  
 </div>
 
+<?php Pjax::begin();?>
+<?= Html::a('1 день', Url::to(['profile/index', 'days' => 1]), ['class' => 'btn btn-primary'], ['data-method' => 'POST']) ?>
+<?= Html::a('7 дней', Url::to(['profile/index', 'days' => 7]), ['class' => 'btn btn-primary'], ['data-method' => 'POST']) ?>
+<?= Html::a('30 дней', Url::to(['profile/index', 'days' => 30]), ['class' => 'btn btn-primary'], ['data-method' => 'POST']) ?>
+
 <?php
+    
     //подготовить массив статистики под формат виджета
     $data =array();
     foreach ($limitSpending as $limit) {
         $data[date('d-m-Y', $limit->date_update)]  = $limit->count;
     }
-    // array_reverse($data, false);
+    $data = array_reverse($data, true);
     // print_r($data);die;
 
     echo Chart::widget([
@@ -76,11 +84,23 @@ $this->params['breadcrumbs'][] = $this->title;
     ]);
 ?>
 
-<?= ListView::widget([
-    'dataProvider' => $dataProvider,
-    'itemView' => '_list',
-]);
-?>
+<?= GridView::widget([
+        'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
+        'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
+
+            'date',
+            'request_method',
+            'api_method',
+            'params',
+
+            // ['class' => 'yii\grid\ActionColumn'],
+        ],
+    ]); ?>
+
+<?php Pjax::end();?>
+
 
 
 

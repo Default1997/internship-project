@@ -6,6 +6,7 @@ use app\models\User;
 use app\models\LimitSpending;
 use app\models\QuotaUtilization;
 use app\models\ProfileUpdateForm;
+use app\models\QuotaUtilizationSearch;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use OpenApi\Annotations as OA;
@@ -39,21 +40,25 @@ class ProfileController extends Controller
         ];
     }
  
-    public function actionIndex()
+    public function actionIndex($days = 30)
     {
         // print_r($this->findModel());die;
         $model = $this->findModel();
-        $dataProvider = new ActiveDataProvider([
-            'query' => QuotaUtilization::find()->where(['user_id' => \Yii::$app->user->identity->id])->orderBy(['date' => SORT_ASC]),
-            'pagination' => [
-                'pageSize' => 20,
-                ],
-        ]);
-        
+        $searchModel = new QuotaUtilizationSearch;
+
+        // $dataProvider = new ActiveDataProvider([
+        //     'query' => QuotaUtilization::find()->where(['user_id' => \Yii::$app->user->identity->id])->orderBy(['date' => SORT_DESC]),
+        //     'pagination' => [
+        //         'pageSize' => 10,
+        //         ],
+        // ]);
+        $dataProvider = $searchModel->search($this->request->queryParams);
+
         return $this->render('index', [
             'model' => $this->findModel(),
-            'limitSpending' => LimitSpending::find()->where(['user_id' => \Yii::$app->user->identity->id])->orderBy(['date_update' => SORT_ASC])->all(),
-            'dataProvider' => $dataProvider
+            'limitSpending' => LimitSpending::find()->where(['user_id' => \Yii::$app->user->identity->id])->limit($days)->orderBy(['date_update' => SORT_DESC])->all(),
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel
         ]);
     }
 

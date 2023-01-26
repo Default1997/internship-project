@@ -13,6 +13,7 @@ class m230116_062643_create_quota_utilization_table extends Migration
     public function safeUp()
     {
         $this->createTable('{{%quota_utilization}}', [
+            'id' => $this->primaryKey(),
             'user_id' => $this->integer(50)->notNull(),
             'date' => $this->timestamp(),
             'request_method' => $this->string(10)->notNull(),

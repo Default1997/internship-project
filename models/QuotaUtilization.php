@@ -7,6 +7,7 @@ use Yii;
 /**
  * This is the model class for table "quota_utilization".
  *
+ * @property int $id
  * @property int $user_id
  * @property string|null $date
  * @property string $request_method
@@ -43,6 +44,7 @@ class QuotaUtilization extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
+            'id' => 'ID',
             'user_id' => 'User ID',
             'date' => 'Date',
             'request_method' => 'Request Method',
